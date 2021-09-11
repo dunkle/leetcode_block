@@ -29,6 +29,13 @@ class Solution:
                     for t in range(j,n):
                         end = (k,t)
                         tmp_area = dp[end[0]][end[1]] - dp[end[0]][start[1]]-dp[start[0]][end[1]]+dp[start[0]][start[1]]
+                        bianyuan = 0
+                        for col in range(start[1], end[1]):
+                            bianyuan +=matrix[start[0]][col]
+                        for row in range(start[0], end[0]):
+                            bianyuan += matrix[row][start[1]]
+                        tmp_area +=bianyuan
+                        tmp_area -= matrix[start[0]][start[1]]
                         if tmp_area>area:
                             area = tmp_area
                             res = [start[0], start[1], end[0], end[1]]
