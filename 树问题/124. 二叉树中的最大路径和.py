@@ -13,7 +13,7 @@ class Solution:
             root + max(left, right) （此处返回时，代表了路径往上递归的子树中的最大的路径）
             如果左右节点的值为负，则可以直接舍去，取0
         '''
-        self.sumall = 0
+        self.sumall = float("-inf")
         def recur(root):
             if not root:
                 return 0

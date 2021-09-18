@@ -1,23 +1,16 @@
 '''
 给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
-
 k 是一个正整数，它的值小于或等于链表的长度。
-
 如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
 
 进阶：
-
 你可以设计一个只使用常数额外空间的算法来解决此问题吗？
 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
- 
-
 示例 1：
-
 
 输入：head = [1,2,3,4,5], k = 2
 输出：[2,1,4,3,5]
 示例 2：
-
 
 输入：head = [1,2,3,4,5], k = 3
 输出：[3,2,1,4,5]
@@ -46,40 +39,44 @@ class ListNode:
         self.val = val
         self.next = next
 class Solution:
-    # 翻转一个子链表，并且返回新的头与尾
-    def reverse(self, head: ListNode, tail: ListNode):
-        # 记录尾节点的后继节点，以及头节点
-        prev = tail.next
-        p = head
-        # 结束循环的时候是到达尾节点，正好，翻转之后是头节点，可以直接终止
-        # 12345-> 54321 遍历翻转时到 5的位置不用进行翻转，因为此时5正好作为头节点
-        while prev != tail:
-            # print("head", p)
-            # print("tail", tail)
-            nex = p.next
-            p.next = prev
-            prev = p
-            p = nex
-        return tail, head
-
     def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
-        hair = ListNode(0)
-        hair.next = head
-        pre = hair
-
-        while head:
-            tail = pre
-            # 查看剩余部分长度是否大于等于 k
+        # 翻转一个子链表，并且返回新的头与尾
+        def tail_insert_reverse(head, tail):
+            # 记录当前节点的后续节点，并且把尾节点之后置为None单独分隔开
+            pre = tail.next
+            tail.next = None
+            # 尾插法翻转链表
+            while head!=tail:
+                # 头尾节点相等时代表终止
+                # 记录尾插法之后的节点
+                tail_nxt = tail.next
+                # 记录当前节点之后的节点
+                head_nxt = head.next
+                # 尾插
+                tail.next = head
+                head.next = tail_nxt
+                head = head_nxt
+            # 尾节点变头节点，找到当前片段的尾部节点
+            cur = tail
+            while cur.next:
+                cur = cur.next
+            # 找到尾节点之后，再链接之前的节点部分
+            cur.next = pre
+            return tail, cur
+        dummy = ListNode(-1)
+        dummy.next = head
+        cur = dummy
+        while cur:
+            # 记录要反转片段首节点之前的一个节点
+            pre_start = cur
+            start = cur.next
+            #长度是否为k，如果不为k不用翻转，直接返回
             for i in range(k):
-                tail = tail.next
-                if not tail:
-                    return hair.next
-            nex = tail.next
-            head, tail = self.reverse(head, tail)
-            # 把子链表重新接回原链表
-            pre.next = head
-            tail.next = nex
-            pre = tail
-            head = tail.next
-
-        return hair.next
+                cur = cur.next
+                if not cur:
+                    return dummy.next
+            end = cur
+            start, end = tail_insert_reverse(start, end)
+            pre_start.next = start
+            cur = end
+        return dummy.next
